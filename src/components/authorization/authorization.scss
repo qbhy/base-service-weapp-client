@@ -1,0 +1,32 @@
+.model {
+    border: 5px #000 solid;
+    padding: 1rem;
+    margin: 3.5rem;
+}
+
+.header {
+    font-size: 32px;
+    margin-bottom: 1.5rem;
+}
+
+.infos {
+    font-size: 28px;
+    margin-bottom: 1.5rem;
+}
+
+.auth-btn {
+    margin: 1.5rem;
+    border-radius: .5rem;
+    background-color: rgb(255, 190, 37);
+    color: #000;
+    border: 5px #000 solid;
+}
+
+.loading {
+    border: 5px #000 solid;
+    margin: 3.5rem;
+    padding: 5rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
