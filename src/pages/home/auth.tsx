@@ -55,7 +55,15 @@ class Auth extends Component {
     componentWillMount() {
         Taro.login().then(res => this.code = res.code);
 
-        if (this.$router.params.scene) {
+        if (this.props.user && this.$router.params.scene) {
+            getAuth(this.$router.params.scene)
+                .then(auth => this.setState({auth}));
+        }
+    }
+
+    componentWillReceiveProps(nextProps: Readonly<{ access_token }>, _: any) {
+        console.log('componentWillReceiveProps', nextProps);
+        if (this.state.auth === null && nextProps.access_token) {
             getAuth(this.$router.params.scene)
                 .then(auth => this.setState({auth}));
         }
@@ -63,7 +71,8 @@ class Auth extends Component {
 
     onAgree = (res) => {
         if (res.detail.encryptedData === undefined) {
-            this.onRefuse();
+            // 取消了
+            return;
         }
 
         const auth = this.state.auth;
@@ -120,7 +129,8 @@ class Auth extends Component {
 
                     {auth.user_action > 0 ? (
                         <View className='auth-actions'>
-                            <Button className={'auth-action-btn ' + (auth.user_action == 1 ? 'agreed' : 'refused')}>您已{actions[auth.user_action]}</Button>
+                            <Button
+                                className={'auth-action-btn ' + (auth.user_action == 1 ? 'agreed' : 'refused')}>您已{actions[auth.user_action]}</Button>
                         </View>
                     ) : null}
                 </View>
