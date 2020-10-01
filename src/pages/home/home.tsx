@@ -27,8 +27,8 @@ class Home extends Component {
 
     render() {
         return (
-            <View>
-                测试
+            <View className='alert'>
+                正在维护更新中...
             </View>
         )
     }

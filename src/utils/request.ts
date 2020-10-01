@@ -18,8 +18,8 @@ export let BLACKLIST = [];
 export function getServer(exclude: ExcludeAble = null) {
     const servers = exclude ? SERVERS.filter(domain => domain !== exclude) : SERVERS;
     let server = servers[Math.floor((Math.random() * servers.length))];
-    // return server;
-    return process.env.NODE_ENV === 'production' ? server : DEV_SERVER;
+    return server;
+    // return process.env.NODE_ENV === 'production' ? server : DEV_SERVER;
 }
 export function onError(callback: any = null) {
     return function (res) {

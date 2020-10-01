@@ -19,7 +19,8 @@ type AuthState = {
         user_action: number,
         type: number,
         id: number,
-    } | null
+    } | null,
+    error_message: string | null,
 }
 type IProps = PageStateProps & PageOwnProps
 
@@ -45,6 +46,7 @@ class Auth extends Component {
 
     state: AuthState = {
         auth: null,
+        error_message: null,
     };
 
     config: Config = {
@@ -57,7 +59,10 @@ class Auth extends Component {
 
         if (this.props.user && this.$router.params.scene) {
             getAuth(this.$router.params.scene)
-                .then(auth => this.setState({auth}));
+                .then(auth => this.setState({auth}))
+                .catch(() => {
+                    this.setState({error_message: '参数错误！'})
+                });
         }
     }
 
@@ -92,49 +97,58 @@ class Auth extends Component {
         auth && authAction(auth.id, {action: 2}).then(() => {
             auth.user_action = 2;
             this.setState({auth})
+        }).then((res: any) => {
+            if (res.msg) {
+                Taro.showToast({title: res.msg, icon: 'none'});
+            }
         })
     };
 
     render() {
-        const {auth} = this.state;
+        const {auth, error_message} = this.state;
         return (
-            <View className='auth-container'>{auth ? (
-                <View className='auth-container'>
-                    <Image src={auth.app.logo} className='auth-app-logo'/>
-                    <Text className='auth-description'>
-                        为了更好的给您提供服务，<Text className='app-name'>{auth.app.name}</Text> 申请获得以下权限
-                    </Text>
+            <View className='auth-container'>
+                {error_message ? error_message : (
+                    <View className='auth-container'>
+                        {auth ? (
+                            <View className='auth-container'>
+                                <Image src={auth.app.logo} className='auth-app-logo'/>
+                                <Text className='auth-description'>
+                                    为了更好的给您提供服务，<Text className='app-name'>{auth.app.name}</Text> 申请获得以下权限
+                                </Text>
 
-                    <Text className='permission-description'>
-                        获得您的{types[auth.type]}
-                    </Text>
+                                <Text className='permission-description'>
+                                    获得您的{types[auth.type]}
+                                </Text>
 
-                    {auth.user_action === 0 && auth.type === 1 ? (
-                        <View className='auth-actions'>
-                            <Button className='auth-action-btn' openType='getUserInfo'
-                                    onGetUserInfo={this.onAgree}>我同意</Button>
-                            <Button className='auth-action-btn auth-action-btn-refuse'
-                                    onClick={this.onRefuse}>拒绝</Button>
-                        </View>
-                    ) : null}
+                                {auth.user_action === 0 && auth.type === 1 ? (
+                                    <View className='auth-actions'>
+                                        <Button className='auth-action-btn' openType='getUserInfo'
+                                                onGetUserInfo={this.onAgree}>我同意</Button>
+                                        <Button className='auth-action-btn auth-action-btn-refuse'
+                                                onClick={this.onRefuse}>拒绝</Button>
+                                    </View>
+                                ) : null}
 
-                    {auth.user_action === 0 && auth.type === 2 ? (
-                        <View className='auth-actions'>
-                            <Button className='auth-action-btn' openType='getPhoneNumber'
-                                    onGetPhoneNumber={this.onAgree}>我同意</Button>
-                            <Button className='auth-action-btn auth-action-btn-refuse'
-                                    onClick={this.onRefuse}>拒绝</Button>
-                        </View>
-                    ) : null}
+                                {auth.user_action === 0 && auth.type === 2 ? (
+                                    <View className='auth-actions'>
+                                        <Button className='auth-action-btn' openType='getPhoneNumber'
+                                                onGetPhoneNumber={this.onAgree}>我同意</Button>
+                                        <Button className='auth-action-btn auth-action-btn-refuse'
+                                                onClick={this.onRefuse}>拒绝</Button>
+                                    </View>
+                                ) : null}
 
-                    {auth.user_action > 0 ? (
-                        <View className='auth-actions'>
-                            <Button
-                                className={'auth-action-btn ' + (auth.user_action == 1 ? 'agreed' : 'refused')}>您已{actions[auth.user_action]}</Button>
-                        </View>
-                    ) : null}
-                </View>
-            ) : '加载中'}
+                                {auth.user_action > 0 ? (
+                                    <View className='auth-actions'>
+                                        <Button
+                                            className={'auth-action-btn ' + (auth.user_action == 1 ? 'agreed' : 'refused')}>您已{actions[auth.user_action]}</Button>
+                                    </View>
+                                ) : null}
+                            </View>
+                        ) : '加载中'}
+                    </View>
+                )}
             </View>
         )
     }
