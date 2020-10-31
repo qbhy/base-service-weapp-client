@@ -1,4 +1,4 @@
 export default {
     name: 'service',
-    title: '网罗微服务',
+    title: '广州坚谷粒',
 }

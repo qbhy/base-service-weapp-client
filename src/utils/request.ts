@@ -6,7 +6,7 @@ export const DEV_SERVER = 'http://127.0.0.1:8000';
 type ExcludeAble = string | null;
 
 export let SERVERS = [
-    'http://s.janguly.com',
+    'https://s.janguly.com',
 ];
 
 let SERVER_ERRORS = {} as {
